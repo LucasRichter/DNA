@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>DNA</title>
+    <style>
+        li { 
+    animation-name: floating;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    margin-left: 30px;
+    margin-top: 5px;
+}
+ 
+@keyframes floating {
+    0% { transform: translate(0,  0px); }
+    50%  { transform: translate(0, 15px); }
+    100%   { transform: translate(0, -0px); }   
+}
+    </style>
+</head>
+<body>
+    <header id="header" class="fixed z-10 left-0 min-h-full w-screen"></header>
+    <canvas class="p-canvas-webgl" id="canvas-webgl" width="1112" height="965" style="width: 1112px; height: 965px;"></canvas>
+    <script src="./dna/initLinks.js" type="module"></script>
+    <script src="./dna/init.js" type="module"></script>
+</body>
+</html>
+    
