@@ -3,14 +3,14 @@ import * as THREE from 'three';
 export default class LinkPoint extends THREE.Points {
   constructor(index, g) {
     const baPositions = new THREE.BufferAttribute(new Float32Array(3), 3);
-    const baRadians = new THREE.BufferAttribute(new Float32Array(1), 1);
-    const baRadiuses = new THREE.BufferAttribute(new Float32Array(1), 1);
-    const baDelays = new THREE.BufferAttribute(new Float32Array(1), 1);
-
+    const baRadians = new THREE.BufferAttribute(new Float32Array(), 1);
+    const baRadiuses = new THREE.BufferAttribute(new Float32Array(), 1);
+    const baDelays = new THREE.BufferAttribute(new Float32Array(), 1);
+  
     baPositions.setXYZ(0, g.getAttribute("position").getX(index), g.getAttribute("position").getY(index), g.getAttribute("position").getZ(index))
-    baRadians.setX(g.getAttribute("radian").getX(index))
-    baRadiuses.setY(g.getAttribute("radius").getX(index))
-    baDelays.setY(g.getAttribute("delay").getX(index))
+    baRadians.setX(0, g.getAttribute("radian").getX(index))
+    baRadiuses.setY(0, g.getAttribute("radius").getX(index) )
+    baDelays.setY(0, g.getAttribute("delay").getX(index))
 
     // Define Geometry
     const geometry = new THREE.BufferGeometry();
@@ -26,7 +26,7 @@ export default class LinkPoint extends THREE.Points {
           type: 'f',
           value: 0
         },
-        uColor: {value: new THREE.Color('#808080')},
+        uColor: {value: new THREE.Color('red')},
       },
       vertexShader: `
         attribute vec3 position;
@@ -39,9 +39,7 @@ export default class LinkPoint extends THREE.Points {
         uniform mat4 modelMatrix;
         uniform float time;
 
-        varying   vec2 pointPos;
         varying vec3 vColor;
-       uniform   vec2 uResolution; // = (window-width, window-height)
 
         void main() {
           // coordinate transformation
@@ -53,34 +51,31 @@ export default class LinkPoint extends THREE.Points {
               );
           vec4 mvPosition = viewMatrix * modelMatrix * vec4(updatePosition, 1.0);
           float distanceFromCamera = length(mvPosition.xyz);
-          float pointSize = 5.0;
-          gl_Position  = projectionMatrix * viewMatrix * mvPosition;
-          gl_PointSize = 10.0;
+          float pointSize = 1400.0 / distanceFromCamera * 1.6;
 
-          vec2 ndcPos = gl_Position.xy / gl_Position.w;
-          pointPos    = uResolution * (ndcPos*0.5 + 0.5);
-      }
+
+          vColor = vec3(0.8 - delay * 0.1, 0.6, 0.6);
+
+          gl_Position = projectionMatrix * mvPosition;
+          gl_PointSize = pointSize;
+        }
       `,
       fragmentShader: `
-      precision highp float;
+        precision highp float;
 
-varying vec3 vColor;
-uniform vec3 uColor;
+        uniform vec3 uColor;
 
-void main() {
-  // Convert PointCoord to the other vec2 has a range from -1.0 to 1.0.
-  vec2 p = gl_PointCoord * 2.0 - 1.0;
+        void main() {
+          // Convert PointCoord to the other vec2 has a range from -1.0 to 1.0.
+          vec2 p = gl_PointCoord * 2.0 - 1.0;
 
-  // Draw circle
-  float radius = length(p);
-  float opacity1 = (1.0 - smoothstep(0.5, 0.7, radius));
-  float opacity2 = smoothstep(0.8, 1.0, radius) * (1.0 - smoothstep(1.0, 1.2, radius));
+          // Draw circle
+          float radius = length(p);
+          float opacity1 = (1.0 - smoothstep(0.1, 0.7, radius));
+          float opacity2 = smoothstep(0.1, 1.0, radius) * (1.0 - smoothstep(0.1, 1.2, radius));
 
-
-  gl_FragColor = vec4(uColor, 1.0);
-  
-}
-
+          gl_FragColor = vec4(uColor, (opacity1 + opacity2) * 0.9);
+        } 
       `,
       transparent: true,
       blending: THREE.AdditiveBlending,
@@ -89,10 +84,10 @@ void main() {
 
     // Create Object3D
     super(geometry, material);
-    this.name = 'PointLink}';
+    this.name = 'PointLink' + index;
   }
 
   render(time) {
-    this.material.uniforms.time.value += time * 0.2;
+    this.material.uniforms.time.value += time * 0.0;
   }
 }
