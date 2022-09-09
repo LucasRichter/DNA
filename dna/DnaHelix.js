@@ -1,6 +1,5 @@
 import * as THREE from 'three';
-import MathEx from '../utils/MathEx.js';
-import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
+import MathEx from '../utils/MathEx';
 
 export default class DnaHelix extends THREE.Points {
   constructor(numLinks) {
@@ -19,7 +18,7 @@ export default class DnaHelix extends THREE.Points {
     const baDelays = new THREE.BufferAttribute(new Float32Array(numAmount), 1);
     const currentColor = new THREE.Color('black');
 
-    const linkPoints = []
+    const linkPoints = [];
 
     for (var i = 0; i < numHelix; i++) {
       const random = Math.random();
@@ -131,7 +130,7 @@ varying vec3 vColor;
       depthWrite: false,
     });
 
-    for (var i = 0; i < numLinks; i++) {
+    for (let i = 0; i < numLinks; i++) {
       const index = i * 303 + 2800;
       linkPoints.push(index);
     }
@@ -146,23 +145,16 @@ varying vec3 vColor;
 
   changeHelixColors(color, index) {
     const attr = this.geometry.getAttribute('color');
-    for (let i = index % 2 === 0 ? 0  : 1;  i < this.numHelix; i+=2) {
+    for (let i = index % 2 === 0 ? 0 : 1; i < this.numHelix; i += 2) {
       attr.setXYZ(i, color.r, color.g, color.b);
     }
-  
-    this.geometry.attributes.color.needsUpdate =  true;
+
+    this.geometry.attributes.color.needsUpdate = true;
   }
 
   changeHelixColor(color, index) {
     const attr = this.geometry.getAttribute('color');
     attr.setXYZ(index, color.r, color.g, color.b);
-    this.geometry.attributes.color.needsUpdate =  true;
-  }
-
-  initLinkPoints(links) {
-  }
-
-  render(time) {
-    this.material.uniforms.time.value += time * 0;
+    this.geometry.attributes.color.needsUpdate = true;
   }
 }
