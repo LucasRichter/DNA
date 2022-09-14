@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "source": "index.html",
   "scripts": {
-    "start": "parcel index.html",
-    "server": "json-server --watch particles.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "parcel index.html",    
+    "build": "parcel build"
   },
   "author": "",
   "license": "ISC",
