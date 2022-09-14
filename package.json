@@ -2,7 +2,6 @@
   "name": "sketch-threejs-src-js-sketch",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "source": "index.html",
   "scripts": {
     "start": "parcel index.html",    
