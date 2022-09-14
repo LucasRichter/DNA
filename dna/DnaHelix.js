@@ -7,7 +7,7 @@ export default class DnaHelix extends THREE.Points {
     const geometry = new THREE.BufferGeometry();
 
     // Define attributes of the instancing geometry
-    const numHelix = 8000;
+    const numHelix = 6000;
     const numLineSpace = 50;
     const numLine = 100;
     const numAmount = numHelix + numLineSpace * numLine;

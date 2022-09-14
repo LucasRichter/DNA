@@ -4,7 +4,7 @@ import { debounce } from '../utils';
 import DnaHelix from './DnaHelix';
 
 let root;
-let deltaRotation = 5;
+let deltaRotation = 0.6;
 
 function init() {
   // ==========
@@ -46,7 +46,7 @@ function init() {
   //
   const render = () => {
     const time = clock.getDelta();
-    root.rotation.x += time * 0.3;
+    root.rotation.x += time * deltaRotation;
 
     renderer.render(scene, camera);
     labelRenderer.render(scene, camera);
@@ -58,7 +58,7 @@ function init() {
   };
 
   const resizeCamera = () => {
-    camera.setFocalLength(50);
+    camera.setFocalLength(20);
     camera.setViewOffset(
       1200,
       800,
@@ -81,12 +81,12 @@ function init() {
 
   const on = () => {
     window.addEventListener('wheel', () => {
-      const time = clock.getDelta() * deltaRotation;
+      const time = clock.getDelta() * deltaRotation * 20;
       root.rotation.x += time;
     });
 
-    document.addEventListener('drag', () => {
-      const time = clock.getDelta() * 0.7;
+    window.addEventListener('drag', () => {
+      const time = clock.getDelta() * deltaRotation * 20;
       root.rotation.x += time;
     });
 
@@ -107,12 +107,15 @@ function init() {
   renderer.setClearColor(0x000000, 0); // the default
 
   camera.aspect = 3 / 2;
-  camera.far = 500;
-  camera.position.set(0, -75, 45);
+  camera.far = 300;
+  camera.position.set(0, -75, 0);
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 
   const linksElement = document.querySelectorAll('li');
-  dnaHelix.initLinkPoints(linksElement);
+  const size = new THREE.Vector3();
+  const boundingBox = new THREE.Box3();
+  boundingBox.setFromObject(dnaHelix);
+  boundingBox.getSize(size);
   root.layers.enableAll();
 
   dnaHelix.linkPoints.forEach((val, index) => {
@@ -120,30 +123,35 @@ function init() {
     const positionAttribute = geometry.getAttribute('position');
     const vertex = new THREE.Vector3();
     vertex.fromBufferAttribute(positionAttribute, val);
-
     const link = linksElement[index];
 
     link.addEventListener('mouseenter', () => {
-      deltaRotation = 1;
+      deltaRotation = 0.4;
       dnaHelix.changeHelixColors(new THREE.Color('purple'), +link.attributes.key.value);
     });
 
     link.addEventListener('mouseleave', () => {
+      deltaRotation = 0.6;
       dnaHelix.changeHelixColors(new THREE.Color('black'), +link.attributes.key.value);
     });
 
     const linkLabel = new CSS2DObject(link);
     linkLabel.layers.set(1);
 
-    const sphereG = new THREE.SphereGeometry(1, 32, 16);
-    const material = new THREE.MeshBasicMaterial({ color: 0x000 });
+    const sphereG = new THREE.SphereGeometry(1.5, 32, 16);
+    const material = new THREE.MeshBasicMaterial({
+      color: 0x494949,
+    });
     const sphere = new THREE.Mesh(sphereG, material);
 
-    sphere.position.set(index + -10, index % 2 === 0 ? 5 : -5, 10);
     sphere.layers.enableAll();
-
-    linkLabel.position.copy(sphere.position);
     dnaHelix.add(sphere);
+    sphere.position.set(
+      -45 + (index * 15),
+      size.y * (index % 2 === 0 ? -1 : 1),
+      size.z * (index % 2 === 0 ? -1 : 1),
+    );
+    linkLabel.position.copy(sphere.position);
     root.add(linkLabel);
   });
 
