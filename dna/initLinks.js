@@ -1,8 +1,7 @@
-const links = Array(8).fill(['Home', 'https://picsum.photos/250/250?grayscale', '#'])
+const links = Array(8).fill(['Home', 'https://picsum.photos/250/250?grayscale', '#']);
 
 const initLinks = () => {
-    const linkTemplate = ([name, img, url], index) => {
-        return `
+  const linkTemplate = ([name, img, url], index) => `
         <li class="group list-none" key="${index}">
             <a class="group-hover:opacity-100 animate-bounce relative transition-all opacity-0 flex items-center justify-center" href="${url}" data-toggle="modal" data-target="#${name}" aria-expanded="false">
                 <div class="absolute">
@@ -14,12 +13,11 @@ const initLinks = () => {
                     <img src="${img}" class="transition-all group-hover:w-20 group-hover:h-20 shrink-0 h-5 w-5 rounded-full" alt="${name}" />
                 </div>
             </a>
-        </li>`
-    }
+        </li>`;
 
-    const header = document.getElementById('header');
-    header.innerHTML = links.map(linkTemplate).join('\n');
-    return header
-}
+  const header = document.getElementById('header');
+  header.innerHTML = links.map(linkTemplate).join('\n');
+  return header;
+};
 
-initLinks()
+initLinks();

@@ -70,13 +70,6 @@ export default class DnaHelix extends THREE.Points {
 
     // Define Material
     const material = new THREE.RawShaderMaterial({
-      uniforms: {
-        time: {
-          type: 'f',
-          value: 0
-        },
-        uColor: {value: new THREE.Color('black')},
-      },
       vertexShader: `
         attribute vec3 position;
 attribute float radian;
@@ -104,7 +97,7 @@ void main() {
   gl_Position = projectionMatrix * mvPosition;
   
   float distanceFromCamera = length(mvPosition.xyz);
-  float pointSize = 700.0 / distanceFromCamera * 1.6;
+  float pointSize = 300.0 / distanceFromCamera * 1.6;
   gl_PointSize = pointSize;
 }
 
@@ -131,7 +124,7 @@ varying vec3 vColor;
     });
 
     for (let i = 0; i < numLinks; i++) {
-      const index = i * 303 + 2800;
+      const index = 2200 + (i * 200) + i;
       linkPoints.push(index);
     }
 

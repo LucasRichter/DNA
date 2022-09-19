@@ -2411,6 +2411,11 @@ regexpp@^3.2.0:
   resolved "https://registry.yarnpkg.com/regexpp/-/regexpp-3.2.0.tgz#0425a2768d8f23bad70ca4b90461fa2f1213e1b2"
   integrity sha512-pq2bWo9mVD43nbts2wGv17XLiNLya+GklZ8kaDLV2Z08gDCsGpnKn9BFMepvWuHCbyVvY7J5o5+BVvoQbmlJLg==
 
+remove-drag-ghosting@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/remove-drag-ghosting/-/remove-drag-ghosting-1.0.4.tgz#0c8564672209b2a9db094d7a7ecd3949d33ddf3c"
+  integrity sha512-pdEXkUl4734fts/Q9klLplrZaIONSMQcB4zBNLUKvo0Oe6c+rwZhDHSQ2pbtfvmIy40l9URXUJKYdSTlA874sA==
+
 resolve-from@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/resolve-from/-/resolve-from-4.0.0.tgz#4abcd852ad32dd7baabfe9b40e00a36db5f392e6"
