@@ -2,7 +2,7 @@ const links = Array(8).fill(['Home', 'https://picsum.photos/250/250?grayscale', 
 
 const initLinks = () => {
   const linkTemplate = ([name, img, url], index) => `
-        <li class="group list-none" key="${index}">
+        <li class="group list-none" style="z-index: 100 !important;" key="${index}">
             <a class="group-hover:opacity-100 animate-bounce relative transition-all opacity-0 flex items-center justify-center" href="${url}" data-toggle="modal" data-target="#${name}" aria-expanded="false">
                 <div class="absolute">
                     <p class="text-white pl-2 pb-2 pr-2 border-solid border-white border-b-2 font-semibold">

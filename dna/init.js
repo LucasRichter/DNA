@@ -3,8 +3,9 @@ import removeGhosting from 'remove-drag-ghosting';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
 import { debounce } from '../utils';
 import DnaHelix from './DnaHelix';
+import particlesJSON from '../particles.json';
 
-const DEFAULT_DELTA_ROTATION = 0.5;
+const DEFAULT_DELTA_ROTATION = 0.25;
 const DEFAULT_MAX_DELTA_ROTATION = 2;
 
 let root;
@@ -148,7 +149,7 @@ function init() {
 
   camera.aspect = 3 / 2;
   camera.far = 300;
-  camera.position.set(0, -75, 0);
+  camera.position.set(20, -75, -25);
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 
   const linksElement = document.querySelectorAll('li');
@@ -157,7 +158,8 @@ function init() {
   boundingBox.setFromObject(dnaHelix);
   boundingBox.getSize(size);
   root.layers.enableAll();
-  const colors = [0x5BC0EB, 0xFDE74C, 0x9BC53D, 0xE55934, 0xFA7921, 0x7A542E, 0x2A2E45, 0xA499BE];
+
+  const colors = [0x00a0d5, 0x00a0d5, 0x00a0d5, 0x00a0d5, 0x00a0d5, 0x00a0d5, 0x00a0d5, 0x00a0d5];
 
   dnaHelix.linkPoints.forEach((val, index) => {
     const { geometry } = dnaHelix;
@@ -215,4 +217,8 @@ function init() {
   resizeWindow();
   renderLoop();
 }
+
 window.onload = init;
+
+// eslint-disable-next-line no-undef
+particlesJS('particles-js', particlesJSON);

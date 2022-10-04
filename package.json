@@ -12,6 +12,7 @@
   "dependencies": {
     "@parcel/config-default": "^2.7.0",
     "@parcel/transformer-raw": "^2.7.0",
+    "particles.js": "^2.0.0",
     "remove-drag-ghosting": "^1.0.4",
     "three": "0.128.0"
   },

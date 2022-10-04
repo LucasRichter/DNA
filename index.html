@@ -9,13 +9,48 @@
         body {
             user-select: none;
         }
+
+        li {
+            z-index: 100 !important;
+        }
     </style>
     <title>DNA</title>
 </head>
 <body draggable="true">
-    <div id="header"></div>
-    <canvas draggable="false" id="canvas-webgl"></canvas>
+    <div id="header">
+        <li class="rounded-full w-5 h-5 bg-black border-2 border-color-white text-color">
+            <a>
+                2021
+            </a>
+        </li>
+    </div>
+    <div id="particles-js" class="absolute left-0 top-0 w-full h-full z-20"></div>
+    <div class="absolute left-0 top-0 w-full h-full z-10">
+        <canvas draggable="false" id="canvas-webgl"></canvas>
+    </div>
+    <canvas id="nodes" class="absolute left-0 top-0 w-full h-full">
+    </canvas>
+    <script src="node_modules/particles.js/particles.js" type="module"></script>
+    <script src="lib/nodejs.js"></script>
     <script src="./dna/initLinks.js"></script>
     <script src="./dna/init.js" type="module"></script>
+    <script type="text/javascript">
+        var nodesjs = new NodesJs({
+            id: 'nodes',
+            width: window.innerWidth,
+            height: window.innerHeight,
+            particleSize: 2,
+            lineSize: 1,
+            particleColor: [0, 0, 0, 1],
+            lineColor: [0, 0, 0],
+            backgroundFrom: [255, 255, 255, 0],
+            backgroundTo: [255, 255, 255, 0],
+            backgroundDuration: 4000,
+            nobg: false,
+            number: window.hasOwnProperty('orientation') ? 30: 100,
+            speed: 20,
+            pointerCircleRadius: 150
+        });
+    </script>
 </body>
 </html>
