@@ -9,7 +9,7 @@ export default class DnaHelix extends THREE.Points {
     // Define attributes of the instancing geometry
     const numHelix = 6000;
     const numLineSpace = 50;
-    const numLine = 100;
+    const numLine = 200;
     const numAmount = numHelix + numLineSpace * numLine;
     const baPositions = new THREE.BufferAttribute(new Float32Array(numAmount * 3), 3);
     const baColors = new THREE.BufferAttribute(new Float32Array(numAmount * 3), 3);
@@ -23,9 +23,9 @@ export default class DnaHelix extends THREE.Points {
     for (var i = 0; i < numHelix; i++) {
       const random = Math.random();
       const diff = {
-        x: (Math.random() * 2 - 1) * random * 6,
-        y: (Math.random() * 2 - 1) * random * 6,
-        z: (Math.random() * 2 - 1) * random * 6,
+        x: (Math.random() * 2 - 1) * random * 8,
+        y: (Math.random() * 2 - 1) * random * 8,
+        z: (Math.random() * 2 - 1) * random * 8,
       };
       baPositions.setXYZ(
         i,
@@ -33,7 +33,7 @@ export default class DnaHelix extends THREE.Points {
         diff.y,
         diff.z
       );
-      baRadians.setX(i, MathEx.radians(i / numHelix * 900 + i % 2 * 180));
+      baRadians.setX(i, MathEx.radians(i / numHelix * 900 + i % 2 * 190));
       baRadiuses.setX(i, 20);
       baDelays.setX(i, MathEx.radians(Math.random() * 360));
       baColors.setXYZ(i, currentColor.r, currentColor.g, currentColor.b);
@@ -56,8 +56,8 @@ export default class DnaHelix extends THREE.Points {
           diff.z
         );
         baRadians.setX(index, radians);
-        baRadiuses.setX(index, (k / numLine * 2 - 1) * 18);
-        baDelays.setX(index, MathEx.radians(Math.random() * 360));
+        baRadiuses.setX(index, (k / numLine * 2 - 1) * 25);
+        baDelays.setX(index, MathEx.radians(Math.random() * 380));
         baColors.setXYZ(i, currentColor.r, currentColor.g, currentColor.b);
       }
     }
@@ -90,14 +90,14 @@ void main() {
   vec3 updatePosition = position
     + vec3(
       sin(time * 4.0 + delay),
-      sin(radian + time * 0.4) * (radius + sin(time * 4.0 + delay)),
-      cos(radian + time * 0.4) * (radius + sin(time * 4.0 + delay))
+      sin(radian + time * 0.5) * (radius + sin(time * 5.0 + delay)),
+      cos(radian + time * 0.5) * (radius + sin(time * 5.0 + delay))
       );
   vec4 mvPosition = viewMatrix * modelMatrix * vec4(updatePosition, 1.0);
   gl_Position = projectionMatrix * mvPosition;
   
   float distanceFromCamera = length(mvPosition.xyz);
-  float pointSize = 300.0 / distanceFromCamera * 1.6;
+  float pointSize = 250.0 / distanceFromCamera * 1.6;
   gl_PointSize = pointSize;
 }
 
