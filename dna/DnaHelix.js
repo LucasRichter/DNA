@@ -97,7 +97,7 @@ void main() {
   gl_Position = projectionMatrix * mvPosition;
   
   float distanceFromCamera = length(mvPosition.xyz);
-  float pointSize = 250.0 / distanceFromCamera * 1.6;
+  float pointSize = 600.0 / distanceFromCamera * 1.6;
   gl_PointSize = pointSize;
 }
 

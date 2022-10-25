@@ -4,6 +4,7 @@ import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRe
 import { debounce } from '../utils';
 import DnaHelix from './DnaHelix';
 import particlesJSON from '../particles.json';
+import YearSphere from './YearSphere';
 
 const DEFAULT_DELTA_ROTATION = 0.25;
 const DEFAULT_MAX_DELTA_ROTATION = 2;
@@ -61,7 +62,7 @@ function init() {
   labelRenderer.domElement.style.position = 'absolute';
   labelRenderer.domElement.style.top = '0px';
   document.body.appendChild(labelRenderer.domElement);
-
+  const spheres = [];
   // ==========
   // Define functions
   //
@@ -71,6 +72,7 @@ function init() {
 
     renderer.render(scene, camera);
     labelRenderer.render(scene, camera);
+    spheres.forEach(s => s.render(0));
   };
 
   const renderLoop = () => {
@@ -191,12 +193,7 @@ function init() {
     const linkLabel = new CSS2DObject(link);
     linkLabel.layers.set(1);
 
-    const sphereG = new THREE.SphereGeometry(1, 32, 16);
-    const material = new THREE.MeshBasicMaterial({
-      color: colors[index],
-    });
-    const sphere = new THREE.Mesh(sphereG, material);
-
+    const sphere = new YearSphere(colors[index], delay, radian, radius);
     sphere.layers.enableAll();
     root.add(sphere);
 
@@ -211,6 +208,7 @@ function init() {
     sphere.position.copy(mvPosition);
     linkLabel.position.copy(sphere.position);
     root.add(linkLabel);
+    spheres.push(sphere);
   });
 
   on();
