@@ -1,26 +1,36 @@
 import * as THREE from 'three';
 
 export default class YearSphere extends THREE.Mesh {
-  constructor(color, delay, radian, radius) {
+  constructor(positions, onFinish) {
     const sphereG = new THREE.SphereGeometry(1, 32, 16);
     const material = new THREE.MeshBasicMaterial({
-      color,
+      color: new THREE.Color(0x00a0d5),
     });
 
     super(sphereG, material);
+    this.defaultColor = new THREE.Color(0x00a0d5);
+    this.name = 'YearSphere';
 
-    this.delay = delay;
-    this.radian = radian;
-    this.radius = radius;
+    const times = [0, 1, 2, 3, 4, 5, 6, 7];
+    const positionKF = new THREE.VectorKeyframeTrack('.position', times, positions, THREE.InterpolateLinear);
+    const opacityKF = new THREE.NumberKeyframeTrack('.material.opacity', [0, 1, 2], [1, 1, 1]);
+    const clip = new THREE.AnimationClip('move', -1, [
+      positionKF,
+      opacityKF,
+    ]);
+
+    this.mixer = new THREE.AnimationMixer(this);
+    this.mixer.addEventListener('finished', () => {
+      onFinish(this);
+    });
+
+    this.material.opacity = 0;
+    this.action = this.mixer.clipAction(clip);
+    this.action.setLoop(THREE.LoopOnce);
+    this.action.clampWhenFinished = true;
   }
 
-  render(time) {
-    this.position.add(
-      new THREE.Vector3(
-        Math.sin(time * 4.0 + this.delay),
-        Math.sin(this.radian + time * 0.5) * (this.radius + Math.sin(time * 5.0 + this.delay)),
-        Math.cos(this.radian + time * 0.5) * (this.radius + Math.sin(time * 5.0 + this.delay)),
-      ),
-    );
+  play(time) {
+    this.mixer.update(time);
   }
 }

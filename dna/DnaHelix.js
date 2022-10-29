@@ -18,7 +18,7 @@ export default class DnaHelix extends THREE.Points {
     const baDelays = new THREE.BufferAttribute(new Float32Array(numAmount), 1);
     const currentColor = new THREE.Color('black');
 
-    const linkPoints = [];
+    const linkPositions = [];
 
     for (var i = 0; i < numHelix; i++) {
       const random = Math.random();
@@ -31,7 +31,7 @@ export default class DnaHelix extends THREE.Points {
         i,
         ((i / numHelix) * 2 - 1) * 150 + diff.x,
         diff.y,
-        diff.z
+        diff.z,
       );
       baRadians.setX(i, MathEx.radians(i / numHelix * 900 + i % 2 * 190));
       baRadiuses.setX(i, 20);
@@ -39,9 +39,9 @@ export default class DnaHelix extends THREE.Points {
       baColors.setXYZ(i, currentColor.r, currentColor.g, currentColor.b);
     }
 
-    for (var j = 0; j < numLineSpace; j++) {
+    for (let j = 0; j < numLineSpace; j++) {
       const radians = MathEx.radians(j / numLineSpace * 900);
-      for (var k = 0; k < numLine; k++) {
+      for (let k = 0; k < numLine; k++) {
         const index = j * numLine + k + numHelix;
         const random = Math.random();
         const diff = {
@@ -53,7 +53,7 @@ export default class DnaHelix extends THREE.Points {
           index,
           ((j / numLineSpace) * 2 - 1) * 150 + diff.x,
           diff.y,
-          diff.z
+          diff.z,
         );
         baRadians.setX(index, radians);
         baRadiuses.setX(index, (k / numLine * 2 - 1) * 25);
@@ -124,21 +124,40 @@ varying vec3 vColor;
     });
 
     for (let i = 0; i < numLinks; i++) {
-      const index = 2200 + (i * 200) + i;
-      linkPoints.push(index);
+      const index = 2000 + (i * 200);
+      const positionAttribute = geometry.getAttribute('position');
+      const radianAttribute = geometry.getAttribute('radian');
+      const radiusAttribute = geometry.getAttribute('radius');
+      const delayAttribute = geometry.getAttribute('delay');
+
+      const radian = radianAttribute.getX(index);
+      const radius = radiusAttribute.getX(index);
+      const delay = delayAttribute.getX(index);
+      const vertex = new THREE.Vector3();
+      vertex.fromBufferAttribute(positionAttribute, index);
+
+      const updatePosition = vertex.add(
+        new THREE.Vector3(
+          Math.sin(delay),
+          Math.sin(radian) * (radius + Math.sin(delay)),
+          Math.cos(radian) * (radius + Math.sin(delay)),
+        ),
+      );
+      const mvPosition = new THREE.Vector4(updatePosition.x, updatePosition.y, updatePosition.z, 1);
+      linkPositions.push(mvPosition);
     }
 
     // Create Object3D
     super(geometry, material);
     this.name = 'DNA Herix';
-    this.linkPoints = linkPoints;
+    this.linkPositions = linkPositions;
     this.numLinks = numLinks;
     this.numHelix = numHelix;
   }
 
-  changeHelixColors(color, index) {
+  changeHelixColors(color) {
     const attr = this.geometry.getAttribute('color');
-    for (let i = index % 2 === 0 ? 0 : 1; i < this.numHelix; i += 2) {
+    for (let i = 0; i < this.numHelix; i += 2) {
       attr.setXYZ(i, color.r, color.g, color.b);
     }
 

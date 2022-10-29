@@ -9,7 +9,7 @@ import YearSphere from './YearSphere';
 const DEFAULT_DELTA_ROTATION = 0.25;
 const DEFAULT_MAX_DELTA_ROTATION = 2;
 
-let root;
+const root = new THREE.Group();
 let deltaRotation = 0.4;
 let mouseDown = false;
 let rotateToUp = false;
@@ -45,7 +45,6 @@ function init() {
     autoStart: false,
   });
 
-  root = new THREE.Group();
   scene.add(root);
 
   // For the post effect.
@@ -66,13 +65,14 @@ function init() {
   // ==========
   // Define functions
   //
+
   const render = () => {
     const time = clock.getDelta();
     root.rotation.x += time * deltaRotation * (rotateToUp ? 1 : -1);
+    root.children.filter((v) => v.name === 'YearSphere').forEach((s) => s.play(time));
 
     renderer.render(scene, camera);
     labelRenderer.render(scene, camera);
-    spheres.forEach(s => s.render(0));
   };
 
   const renderLoop = () => {
@@ -133,14 +133,6 @@ function init() {
       deltaRotation = DEFAULT_DELTA_ROTATION;
     }, false);
 
-    window.addEventListener('blur', () => {
-      // this window is inactive.
-      clock.stop();
-    });
-    window.addEventListener('focus', () => {
-      // this window is inactive.
-      clock.start();
-    });
     window.addEventListener('resize', debounce(resizeWindow, 1000));
   };
 
@@ -157,58 +149,44 @@ function init() {
   const linksElement = document.querySelectorAll('li');
   const size = new THREE.Vector3();
   const boundingBox = new THREE.Box3();
+
   boundingBox.setFromObject(dnaHelix);
   boundingBox.getSize(size);
   root.layers.enableAll();
 
-  const colors = [0x00a0d5, 0x00a0d5, 0x00a0d5, 0x00a0d5, 0x00a0d5, 0x00a0d5, 0x00a0d5, 0x00a0d5];
+  const parsedPosition = [];
+  dnaHelix.linkPositions.forEach((v) => {
+    parsedPosition.push(v.x);
+    parsedPosition.push(v.y);
+    parsedPosition.push(v.z);
+  });
 
-  dnaHelix.linkPoints.forEach((val, index) => {
-    const { geometry } = dnaHelix;
-    const positionAttribute = geometry.getAttribute('position');
-
-    const radianAttribute = geometry.getAttribute('radian');
-    const radian = radianAttribute.getX(val);
-
-    const radiusAttribute = geometry.getAttribute('radius');
-    const radius = radiusAttribute.getX(val);
-
-    const delayAttribute = geometry.getAttribute('delay');
-    const delay = delayAttribute.getX(val);
-
-    const vertex = new THREE.Vector3();
-    vertex.fromBufferAttribute(positionAttribute, val);
-
-    const link = linksElement[index];
-    link.addEventListener('mouseenter', () => {
-      deltaRotation = 0;
-      dnaHelix.changeHelixColors(new THREE.Color(colors[index]), +link.attributes.key.value);
+  linksElement.forEach((el, i) => {
+    // Add tasks to do
+    const sphere = new YearSphere(parsedPosition, (e) => {
+      clock.stop();
+      el.classList.remove('opacity-0', 'pointer-events-none');
+      dnaHelix.changeHelixColors(e.defaultColor);
     });
 
-    link.addEventListener('mouseleave', () => {
-      deltaRotation = DEFAULT_DELTA_ROTATION;
-      dnaHelix.changeHelixColors(new THREE.Color('black'), +link.attributes.key.value);
+    el.addEventListener('mouseleave', () => {
+      if (sphere.action.isRunning()) return;
+      clock.start();
+      el.classList.add('opacity-0', 'pointer-events-none');
+      sphere.action.reset();
+      dnaHelix.changeHelixColors(new THREE.Color('black'));
     });
 
-    const linkLabel = new CSS2DObject(link);
-    linkLabel.layers.set(1);
+    const linkLabel = new CSS2DObject(el);
+    linkLabel.layers.set(0);
 
-    const sphere = new YearSphere(colors[index], delay, radian, radius);
-    sphere.layers.enableAll();
+    sphere.add(linkLabel);
     root.add(sphere);
 
-    const updatePosition = vertex.add(
-      new THREE.Vector3(
-        Math.sin(delay),
-        Math.sin(radian) * (radius + Math.sin(delay)),
-        Math.cos(radian) * (radius + Math.sin(delay)),
-      ),
-    );
-    const mvPosition = new THREE.Vector4(updatePosition.x, updatePosition.y, updatePosition.z, 1);
-    sphere.position.copy(mvPosition);
-    linkLabel.position.copy(sphere.position);
-    root.add(linkLabel);
     spheres.push(sphere);
+
+    sphere.action.startAt(i);
+    sphere.action.play();
   });
 
   on();
